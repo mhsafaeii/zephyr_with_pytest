@@ -1,4 +1,4 @@
-# pytest-zephyr-scale-integration
+# zephyr_with_pytest
 
 ![PyPI](https://img.shields.io/pypi/v/pytest-zephyr-scale-integration)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
