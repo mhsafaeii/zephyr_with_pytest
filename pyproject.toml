@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zephyr_with_pytest"
+version = "1.0.0"
+description = "A library for integrating Jira Zephyr Scale with pytest"
+requires-python = ">=3.6"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "requests",
+    "requests_toolbelt",
+]
+[project.entry-points.pytest11]
+pytest_zephyr_integration = "zephyr_with_pytest.conftest"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["zephyr_with_pytest*"]
