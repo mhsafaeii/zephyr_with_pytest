@@ -1,36 +1,36 @@
 
 
 def find_folder_id_by_name(folders, folder_name):
-    """Поиск папки по имени в дереве папок"""
+    """Search for a folder by name in the folder tree"""
 
     for folder in folders:
         if folder['name'] == folder_name:
-            return folder['id']  # Возвращаем ID папки, если нашли
+            return folder['id']  # Return folder ID if found
 
-        # Если у папки есть дочерние элементы, продолжаем поиск в них
+        # If the folder has child elements, continue searching in them
         if folder.get('children'):
             child_id = find_folder_id_by_name(folder['children'], folder_name)
             if child_id:
                 return child_id
 
-    return None  # Если папка с нужным именем не найдена
+    return None  # If folder with the required name is not found
 
 
 def get_or_create_folder(api_client, folders, folder_name):
-    """Получение или создание новой папки"""
+    """Get or create a new folder"""
 
-    # Дерево папок
+    # Folder tree
     folder_tree = folders.get('children', [])
 
-    # Ищем папку по имени
+    # Search for folder by name
     folder_id = find_folder_id_by_name(folder_tree, folder_name)
 
     if folder_id:
-        print(f"Папка '{folder_name}' найдена, ID: {folder_id}")
+        print(f"Folder '{folder_name}' found, ID: {folder_id}")
         return folder_id
     else:
-        # Если не нашли, создаем папку в корне (без parent_id)
-        print(f"Папка '{folder_name}' не найдена, создаем новую.")
+        # If not found, create folder in root (without parent_id)
+        print(f"Folder '{folder_name}' not found, creating a new one.")
         folder_id = api_client.create_test_run_folder(folder_name)
-        print(f"Создана папка '{folder_name}', ID: {folder_id}")
+        print(f"Created folder '{folder_name}', ID: {folder_id}")
         return folder_id
