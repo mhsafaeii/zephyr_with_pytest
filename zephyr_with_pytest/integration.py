@@ -31,7 +31,7 @@ class Integration:
 
     def load_environment_variables(self):
 
-        load_dotenv()
+        load_dotenv(".env")
         date = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
         self.JIRA_PROJECT_ID = int(os.getenv("JIRA_PROJECT_ID"))
         self.JIRA_URL = os.getenv("JIRA_URL")
