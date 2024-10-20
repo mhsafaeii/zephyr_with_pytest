@@ -4,64 +4,61 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.6%2B-brightgreen.svg)
 
-`pytest-zephyr-scale-integration` — это библиотека для интеграции `pytest` с Jira Zephyr (Adaptavist\TM4J). 
-Она позволяет автоматически создавать тестовые циклы в Zephyr, запускать тесты и обновлять их статусы в Jira.
+`pytest-zephyr-scale-integration` is a library for integrating `pytest` with Jira Zephyr (Adaptavist\TM4J).
+It allows you to automatically create test cycles in Zephyr, run tests and update their statuses in Jira.
 
-## Возможности
+## Features
 
-- Автоматическое создание тестовых циклов в Zephyr (с возможностью создания папки или добавления в существующую).
-- Обновление статусов тестов в Jira Zephyr.
-- Поддержка параметризованных тестов.
-- Гибкая настройка через файл `.env`.
+- Automatic creation of test cycles in Zephyr (with the ability to create a folder or add to an existing one).
+- Update test statuses in Jira Zephyr.
+- Support for parameterized tests.
+- Flexible configuration via `.env` file.
 
-## Установка
+## Installation
 
-Установить библиотеку можно через `pip`:
+You can install the library via `pip`:
 ```bash
 pip install pytest_zephyr_scale_integration
 ```
 
-## Запуск
-1. Создать файл `.env` и заполнить его полями
+## Launch
+1. Create a `.env` file and fill it with fields
 ```commandline
-# Конфигурация JIRA
-JIRA_PROJECT_ID=12345 # id проекта, можно узнать вызвав `GET /rest/tests/1.0/project`
+# JIRA configuration
+JIRA_PROJECT_ID=12345 # project id, can be found by calling `GET /rest/tests/1.0/project`
 JIRA_URL='https://your-jira-instance.atlassian.net'
 FOLDER_NAME='Regress v1.0.0'
 ```
-2. Называть тесты нужно по имени ключа тест-кейса  Jira Zephyr, например, `"test_T123"`.
-3. При запуске автотестов через `pyest` нужно указать дополнительные параметры: <br>
-`--zephyr` - необязательный. Вкл процесса интеграции. После прохождения автотестов будет автоматически 
-создан тестовый цикл. <br>
-`--jira_token` - токен ТУЗ'а, у которого настроена электронная почта. Обязательное поле, если `--zephyr`.
-`--zephyr_test_run_name` - необязательный. Наименования тестового цикла, по-умолчанию - "Test Run Cycle". <br>
-Например, <br>
+2. Tests should be named by the Jira Zephyr test case key, for example, `"test_T123"`.
+3. When running autotests via `pyest`, you need to specify additional parameters: <br>
+`--zephyr` - optional. Enables the integration process. After passing the autotests, a test cycle will be automatically
+created. <br>
+`--jira_token` - the token of the TUZ that has an email configured. Mandatory field if `--zephyr`.
+
+`--zephyr_test_run_name` - optional. The name of the test cycle, by default - "Test Run Cycle". <br>
+For example, <br>
 ```pytest --zephyr --zephyr_test_run_name="Regress v.1.1.0"```
 
-## Логика создания тестового цикла
-- Если FOLDER_NAME в `.env` пустой, то тестовый цикл с пройденными тестами будет создан в корневой папке.
-- Если FOLDER_NAME в `.env` заполнен, то:
-  - Если указанная папка уже есть, то тестовый цикл создастся в ней.
-  - Если указанной папки нет, то она авматотически создастся в корне и ней будет находится созданный тестовый цикл.
+## Logic for creating a test cycle
+- If FOLDER_NAME in `.env` is empty, then the test cycle with passed tests will be created in the root folder.
+- If FOLDER_NAME in `.env` is filled, then:
+- If the specified folder already exists, the test cycle will be created in it.
+- If the specified folder does not exist, it will be automatically created in the root and the created test cycle will be located in it.
 
-## Логика установки статусов тест-кейсам в Jira Zephyr
-Всем тест-кейсам устанавливаются соответствующие pytest'у статусы в Jira Zephyr. <br>
+## Logic for setting test case statuses in Jira Zephyr
+All test cases are assigned the corresponding pytest statuses in Jira Zephyr. <br>
 
-Если в Jira Zephyr написан параметризованный тест, то в тестовом 
-цикле он будет выглядеть как один тест с тестовыми скриптами в 
-колчичестве равном набору параметров в тест-кейсе. Каждый такой набор называется `Test Script`. <br>
-При автоматизации такого тест-кейса нужно делать параметризацию и в коде. Наборы в `pyest` должны идти
-в том же порядке, что и в Zephyr, так как `pyest` выполняет их по порядку.
+If a parameterized test is written in Jira Zephyr, then in the test
+cycle it will look like a single test with test scripts in a quantity equal to the set of parameters in the test case. Each such set is called `Test Script`. <br>
+When automating such a test case, you need to do parameterization in the code as well. The sets in `pyest` should go in the same order as in Zephyr, since `pyest` executes them in order.
 
-В тестовом цикле результаты прохождения одного параметризованного теста отображаются в 
-шагах `Test Script'а`, чтобы можно было явно определить какой из всех наборов оказался упавшим.
-Логика установки статусов у шагов параметризованных тестов:
-- Если набор пройден успешно, то все шаги `Test Script'а` - PASS
-- Если набор упал, то все шаги `Test Script'а` - FAIL.
+In the test cycle, the results of passing one parameterized test are displayed in the steps of `Test Script`, so that it is possible to clearly determine which of all the suites failed.
+The logic for setting the statuses of the steps of parameterized tests:
+- If the suite is passed successfully, then all the steps of `Test Script` are PASS
+- If the suite fails, then all the steps of `Test Script` are FAIL.
 
-Логики по сопоставлению действий в `pytest' и шагов в Zephyr нет.
+There is no logic for matching actions in `pytest' and steps in Zephyr.
 
-Логика установки статусов и тест-кейсов:
-- Если все наборы пройдены успешно, то тест-кейс - PASS
-- Если хотя бы один набор упал, то тест-кейса отмечается как FAIL.
-
+The logic for setting statuses and test cases:
+- If all suites are passed successfully, then the test case is PASS
+- If at least one suite fails, then the test case is marked as FAIL.
