@@ -77,7 +77,7 @@ class Integration:
         test_cycle_statuses = self.get_test_cycle_statuses()
         test_cycle_status_id = None
         for test_cycle_status in test_cycle_statuses:
-            if test_cycle_status.get('name').lower() == 'not executed':
+            if test_cycle_status.get('name').lower() == 'Not Executed':
                 test_cycle_status_id = test_cycle_status.get('id')
 
         url = f"{self.JIRA_URL}/rest/tests/1.0/testrun"
