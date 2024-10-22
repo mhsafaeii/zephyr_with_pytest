@@ -18,7 +18,7 @@ It allows you to automatically create test cycles in Zephyr, run tests and updat
 
 You can install the library via `pip`:
 ```bash
-pip install pytest_zephyr_scale_integration
+pip install git+https://github.com/mhsafaeii/zephyr_with_pytest
 ```
 
 ## Launch
