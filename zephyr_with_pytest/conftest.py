@@ -52,8 +52,9 @@ def pytest_runtest_makereport(item, call):
 def pytest_configure(config):
     """Configuration"""
 
+    date = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
     zephyr_enabled = config.getoption("--zephyr", default=False)
-    zephyr_test_run_name = config.getoption("--zephyr_test_run_name", default="Test Run Cycle")
+    zephyr_test_run_name = config.getoption("--zephyr_test_run_name", default=f"Test Cycle {date}")
     jira_token = config.getoption("--jira_token")
 
     if zephyr_enabled and not jira_token:
