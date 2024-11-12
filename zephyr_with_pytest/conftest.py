@@ -1,6 +1,6 @@
 from pprint import pprint
 import re
-
+from datetime import datetime
 import pytest
 
 from .integration import Integration
@@ -11,7 +11,7 @@ executed_test_keys = [] # list of executed tests (pytest)
 full_test_results = {} # dictionary with all tests and statuses (with parametrization)
 set_test_results = {} # dictionary with tests and statuses without repetitions (to set the status for a test)
 dict_test_statuses = {} # dictionary with statuses for test cases (e.g. {'PASS': 3238, 'FAIL': 3239})
-
+date = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -52,7 +52,7 @@ def pytest_runtest_makereport(item, call):
 def pytest_configure(config):
     """Configuration"""
 
-    date = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+    # date = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
     zephyr_enabled = config.getoption("--zephyr", default=False)
     zephyr_test_run_name = config.getoption("--zephyr_test_run_name", default=f"Test Cycle {date}")
     jira_token = config.getoption("--jira_token")
@@ -89,7 +89,7 @@ def pytest_sessionfinish(session, exitstatus):
     yield
 
     zephyr_enabled = getattr(session.config, "_zephyr_enabled", False)
-    zephyr_test_run_name = getattr(session.config, "_zephyr_test_run_name", "Test Run Cycle")
+    zephyr_test_run_name = getattr(session.config, "_zephyr_test_run_name", f"Test Cycle {date}")
     integration = getattr(session.config, "_zephyr_integration", None)
 
     if zephyr_enabled and integration:
@@ -167,6 +167,6 @@ def pytest_sessionfinish(session, exitstatus):
 def pytest_addoption(parser):
     """Custom parameters for running autotests."""
     parser.addoption("--zephyr", action="store_true", help="Enable Zephyr integration")
-    parser.addoption("--zephyr_test_run_name", action="store", default="Test Run Cycle",
+    parser.addoption("--zephyr_test_run_name", action="store", default=f"Test Cycle {date}",
                      help="Name of the test run cycle")
     parser.addoption("--jira_token", action="store", help="JIRA API token for authentication")
