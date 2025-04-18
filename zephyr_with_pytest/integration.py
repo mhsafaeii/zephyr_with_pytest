@@ -40,10 +40,10 @@ class Integration:
         missing_env_vars = [var for var in ["JIRA_TOKEN", "JIRA_PROJECT_ID", "JIRA_URL"] if not getattr(self, var)]
         if missing_env_vars:
             raise EnvironmentError(f"Missing required environment variables: {', '.join(missing_env_vars)}")
-        else:
-            print(
-                f'Variables loaded: {self.JIRA_TOKEN} \t {self.JIRA_PROJECT_ID} \t '
-                f'{self.JIRA_URL} \t {self.JIRA_PROJECT_ID}')
+        # else:
+        #     print(
+        #         f'Variables loaded: {self.JIRA_TOKEN} \t {self.JIRA_PROJECT_ID} \t '
+        #         f'{self.JIRA_URL} \t {self.JIRA_PROJECT_ID}')
 
     def _send_request_with_retries(self, method, url, **kwargs):
 
@@ -53,8 +53,8 @@ class Integration:
             if response.status_code == 429:
                 retries += 1
                 wait_time = self.retry_delay * (2 ** (retries - 1))
-                print(f"The limit of the number of messages sent has been exceeded. "
-                      f"Waiting {wait_time} seconds before resending...")
+                # print(f"The limit of the number of messages sent has been exceeded. "
+                #       f"Waiting {wait_time} seconds before resending...")
                 time.sleep(wait_time)
             else:
                 response.raise_for_status()
@@ -67,8 +67,8 @@ class Integration:
         url = f"{self.JIRA_URL}/rest/tests/1.0/project/{self.JIRA_PROJECT_ID}"
         response = self.session.get(url)
 
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
+        # data = dump.dump_all(response)
+        # print(data.decode('utf-8'))
 
         response.raise_for_status()
         return response.json().get('key')
@@ -92,9 +92,6 @@ class Integration:
 
         response = self.session.post(url, json=payload)
 
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
-
         response.raise_for_status()
         return response.json().get('id')
 
@@ -108,9 +105,6 @@ class Integration:
         }
         response = self._send_request_with_retries('POST', url, json=payload)
 
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
-
         response.raise_for_status()
         return response.json().get('id')
 
@@ -119,9 +113,6 @@ class Integration:
         url = f"{self.JIRA_URL}/rest/tests/1.0/project/{self.JIRA_PROJECT_ID}/foldertree/testrun"
         response = self._send_request_with_retries('GET', url)
 
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
-
         return response.json()
 
     def get_test_case_id(self, project_key, test_case_key):
@@ -129,18 +120,12 @@ class Integration:
         url = f"{self.JIRA_URL}/rest/tests/1.0/testcase/{project_key}-{test_case_key}?fields=id"
         response = self._send_request_with_retries('GET', url)
 
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
-
         response.raise_for_status()
         return response.json().get('id')
 
     def get_test_run_id(self, test_cycle_key):
         url = f"{self.JIRA_URL}/rest/tests/1.0/testrun/{test_cycle_key}?fields=id"
         response = self._send_request_with_retries('GET', url)
-
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
 
         response.raise_for_status()
         return response.json().get('id')
@@ -158,9 +143,6 @@ class Integration:
         }
         response = self._send_request_with_retries('PUT', url, json=payload)
 
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
-
         response.raise_for_status()
 
     def get_test_run_items(self, test_run_id):
@@ -168,9 +150,6 @@ class Integration:
         url = (f"{self.JIRA_URL}/rest/tests/1.0/testrun/{test_run_id}/testrunitems?"
                f"fields=testCaseId,testScriptResults(id),testRunId")
         response = self._send_request_with_retries('GET', url)
-
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
 
         response.raise_for_status()
         return response.json().get('testRunItems', [])
@@ -181,9 +160,6 @@ class Integration:
                f"/testresults?fields=testScriptResults(id,parameterSetId)&itemId={item_id}")
         response = self._send_request_with_retries('GET', url)
 
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
-
         response.raise_for_status()
         return response.json()
 
@@ -192,18 +168,12 @@ class Integration:
         url = f'{self.JIRA_URL}/rest/tests/1.0/project/{self.JIRA_PROJECT_ID}/testresultstatus'
         response = self._send_request_with_retries('GET', url)
 
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
-
         response.raise_for_status()
         return response.json()
 
     def get_test_cycle_statuses(self):
         url = f'{self.JIRA_URL}/rest/tests/1.0/project/{self.JIRA_PROJECT_ID}/testrunstatus'
         response = self._send_request_with_retries('GET', url)
-
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
 
         response.raise_for_status()
         return response.json()
@@ -214,17 +184,11 @@ class Integration:
         url = f"{self.JIRA_URL}/rest/tests/1.0/testresult"
         response = self._send_request_with_retries('PUT', url, json=statuses)
 
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
-
         response.raise_for_status()
 
     def set_test_script_statuses(self, script_statuses):
 
         url = f"{self.JIRA_URL}/rest/tests/1.0/testscriptresult"
         response = self._send_request_with_retries('PUT', url, json=script_statuses)
-
-        data = dump.dump_all(response)
-        print(data.decode('utf-8'))
 
         response.raise_for_status()

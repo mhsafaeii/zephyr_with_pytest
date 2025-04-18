@@ -42,11 +42,6 @@ def pytest_runtest_makereport(item, call):
                 full_test_results[test_nodeid] = dict_test_statuses.get('FAIL')
                 set_test_results[potential_key] = dict_test_statuses.get('FAIL')
 
-    print('executed_test_keys:', executed_test_keys)
-    print('full_test_results:', full_test_results)
-    print('set_test_results:', set_test_results)
-    print('dict_test_statuses:', dict_test_statuses)
-
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_configure(config):
@@ -127,8 +122,8 @@ def pytest_sessionfinish(session, exitstatus):
         # Processing parameterized tests
         for test_key in executed_test_keys:
             relevant_results = [result for key, result in full_test_results.items() if test_key in key]
-            print('relevant_results')
-            pprint(relevant_results)
+            # print('relevant_results')
+            # pprint(relevant_results)
 
             for item in test_run_items:
                 test_case_run_id = item["id"]
@@ -143,8 +138,8 @@ def pytest_sessionfinish(session, exitstatus):
                         parameter_set_status[parameter_set_id]["steps"].append(script_result['id'])
 
                 sorted_parameter_set_status = dict(sorted(parameter_set_status.items()))
-                print('sorted_parameter_set_status')
-                print(sorted_parameter_set_status)
+                # print('sorted_parameter_set_status')
+                # print(sorted_parameter_set_status)
 
                 for param_id, info in zip(sorted_parameter_set_status.keys(), relevant_results):
                     sorted_parameter_set_status[param_id]["status"] = info
@@ -157,8 +152,8 @@ def pytest_sessionfinish(session, exitstatus):
                             "testResultStatusId": info["status"]
                         })
 
-                print('script_statuses_to_update')
-                print(script_statuses_to_update)
+                # print('script_statuses_to_update')
+                # print(script_statuses_to_update)
 
                 if script_statuses_to_update:
                     integration.set_test_script_statuses(script_statuses_to_update)
